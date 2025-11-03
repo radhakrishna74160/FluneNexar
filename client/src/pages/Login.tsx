@@ -2,10 +2,28 @@ import { motion } from "framer-motion";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
 import { Sparkles } from "lucide-react";
+import { useState } from "react";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Login() {
-  const handleGoogleSignIn = () => {
-    console.log("Google sign-in initiated");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      // You can handle the signed-in user here
+      const user = result.user;
+      console.log("Google sign-in successful", user);
+      // TODO: redirect or update app state on successful login
+    } catch (err) {
+      console.error("Google sign-in error", err);
+      // Optionally display an error toast to the user
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,7 +67,7 @@ export default function Login() {
             </p>
           </div>
 
-          <GoogleAuthButton onClick={handleGoogleSignIn} />
+          <GoogleAuthButton onClick={handleGoogleSignIn} isLoading={isLoading} />
 
           <div className="text-center">
             <p className="text-xs text-muted-foreground">
