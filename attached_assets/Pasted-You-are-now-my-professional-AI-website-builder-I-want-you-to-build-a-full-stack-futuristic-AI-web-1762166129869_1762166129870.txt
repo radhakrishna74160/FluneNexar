@@ -1,0 +1,86 @@
+You are now my professional AI website builder. 
+I want you to build a full-stack futuristic AI web application called “NEXAR — Your AI Manager” using only my Gemini API key (I will provide it in .env).
+
+🔥 Overview:
+The website is a personal AI manager system. 
+After login, the user names their manager. 
+Then an animated AI manager (Nexar) appears — glowing avatar, smooth chat animations, and voice replies.
+
+When the user gives a request, the manager activates 5 AI assistants (Thinker, Writer, Coder, Researcher, Designer), 
+each with their own mini animations and logic. 
+The manager collects all assistant outputs, merges them smartly, and replies to the user in one final answer with text + voice.
+
+🧠 Core Features:
+1. User sign-up/login using Google Authentication (Firebase Auth).
+2. Chat UI with glowing animations and typing effects (React + Tailwind + Framer Motion).
+3. Real-time AI replies powered by Gemini API (streaming style).
+4. Each assistant shows progress animation and glows when done.
+5. Manager voice replies using Web Speech API.
+6. Chat history saved for each user (Firebase Firestore or local JSON).
+7. User can customize manager’s name, avatar, color theme, and personality.
+
+⚙️ Tech Stack:
+- Frontend: React + Tailwind + Framer Motion + React-Tsparticles
+- Backend: Node.js (Express)
+- Database & Auth: Firebase (free)
+- AI: Gemini API (single API key from .env)
+- Deployment: Replit web server
+
+🎨 Design Style:
+- Dark mode + neon gradients (blue/purple)
+- Glassmorphism chat panels
+- Floating AI manager avatar with energy pulse lines
+- Responsive layout (desktop + mobile)
+- Soft sound and voice animations
+
+📦 Folder Structure:
+/
+ ├── frontend/
+ │     ├── src/
+ │     │     ├── components/
+ │     │     ├── pages/
+ │     │     ├── App.jsx
+ │     │     └── main.jsx
+ │     ├── public/
+ │     ├── package.json
+ │     └── tailwind.config.js
+ ├── backend/
+ │     ├── server.js
+ │     ├── routes/
+ │     │     └── manager.js
+ │     ├── package.json
+ │     └── .env.example
+ ├── firebaseConfig.js
+ ├── README.md
+
+💬 Manager Logic:
+When a user message arrives:
+1. Analyze user intent.
+2. Create 5 sub-prompts for assistants (Thinker, Writer, Coder, Researcher, Designer).
+3. Call Gemini API in parallel for each assistant.
+4. Merge their answers intelligently.
+5. Stream the final merged answer back to the UI with animation + voice.
+
+🔑 API Integration:
+Use my Gemini API key (from .env) like this:
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+vbnet
+Copy code
+
+🎙️ Voice & Animation:
+- Use Web Speech API for voice output.
+- Framer Motion for animations.
+- Show glowing particles during reply.
+
+🧩 Output:
+Generate complete working code with step-by-step setup instructions for running on Replit:
+1. Paste Gemini API key in .env as GEMINI_API_KEY=“your_key_here”
+2. Setup Firebase (give fields to fill)
+3. Run frontend + backend connected on same port.
+4. Test chat and voice.
+
+⚡ Goal:
+Make “NEXAR — Your AI Manager” the most interactive, futuristic AI website ever built using a single Gemini API key. 
+Everything must be customizable, visually beautiful, and work freely in Replit without paid tools
