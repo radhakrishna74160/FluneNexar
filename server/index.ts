@@ -66,24 +66,27 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
+  // Get port from environment variable for Render compatibility
   const port = parseInt(process.env.PORT || '5000', 10);
-
-  // `reusePort: true` is not supported on some platforms (notably certain Windows
-  // socket implementations) and can cause `listen ENOTSUP`. Only enable it when
-  // the platform is not Windows.
+  
+  // In production (Render), bind to 0.0.0.0
+  // In development, bind to 127.0.0.1 for security
+  const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
+  
+  // Configure server options - avoid reusePort on Windows
   const listenOptions: any = {
     port,
-    host: "127.0.0.1",
+    host,
   };
   if (process.platform !== 'win32') {
     listenOptions.reusePort = true;
   }
 
   server.listen(listenOptions, () => {
-    console.log(`✅ Server running at http://127.0.0.1:${port}`);
+    // In production, just log the port as the host will be determined by the platform
+    const logUrl = process.env.NODE_ENV === 'production'
+      ? `port ${port}`
+      : `http://${host}:${port}`;
+    console.log(`✅ Server running on ${logUrl}`);
   });
 })();
