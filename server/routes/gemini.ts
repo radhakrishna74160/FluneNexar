@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Prefer a server-side env var named GEMINI_API_KEY. If for some reason a Vite env var
 // was used, allow it as a fallback (but don't rely on client-side keys in production).
-const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "AIzaSyCp3SE_qPAZiqW2TQEEktJIwhpI4kNcXEs";
 if (!apiKey) {
   console.warn('Gemini API key is not set. Set GEMINI_API_KEY in the server environment.');
 }

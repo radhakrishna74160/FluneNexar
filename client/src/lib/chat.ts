@@ -1,4 +1,4 @@
-// Client-side chat API integration 
+// Client-side chat API integration
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 interface Message {
@@ -23,7 +23,8 @@ export const useChatMessages = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to send message');
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || 'Failed to send message');
     }
 
     return response.json();

@@ -54,7 +54,7 @@ app.use((req, res, next) => {
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    throw err;
+    console.error('Server error:', err);
   });
 
   // importantly only setup vite in development and after
@@ -68,11 +68,11 @@ app.use((req, res, next) => {
 
   // Get port from environment variable for Render compatibility
   const port = parseInt(process.env.PORT || '5000', 10);
-  
-  // In production (Render), bind to 0.0.0.0
+
+  // In production, bind to 0.0.0.0
   // In development, bind to 127.0.0.1 for security
   const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
-  
+
   // Configure server options - avoid reusePort on Windows
   const listenOptions: any = {
     port,

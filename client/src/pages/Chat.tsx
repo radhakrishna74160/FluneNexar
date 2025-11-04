@@ -8,6 +8,10 @@ import { ChatInput } from "@/components/ChatInput";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut } from "lucide-react";
+import { useChatMessages } from "@/lib/chat";
+import { useToast } from "@/hooks/use-toast";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import blueAvatar from '@assets/generated_images/Blue_holographic_AI_avatar_a57d94a6.png';
 
 interface Message {
@@ -35,6 +39,8 @@ export default function Chat() {
   });
   const [settingsOpen, setSettingsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { mutateAsync: sendChatMessage, isPending } = useChatMessages();
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -51,7 +57,7 @@ export default function Chat() {
       content,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
 
@@ -84,19 +90,21 @@ export default function Chat() {
       }, index * 200);
     });
 
-    setTimeout(() => {
+    try {
+      const response = await sendChatMessage([...messages, userMessage]);
+
       setIsTyping(false);
       setIsSpeaking(true);
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I've analyzed your request with my specialized assistants. Here's what we found:\n\nThe Thinker has considered the strategic approach, the Writer has crafted clear explanations, the Coder has outlined technical implementation, the Researcher has gathered relevant data, and the Designer has suggested visual improvements.\n\nHow would you like to proceed?",
+        content: response.content,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
-      
+
       setTimeout(() => {
         setIsSpeaking(false);
         setAssistantStatuses({
@@ -107,11 +115,39 @@ export default function Chat() {
           designer: { status: "idle", progress: 0 },
         });
       }, 2000);
-    }, 3000);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setIsTyping(false);
+      toast({
+        title: "Message failed",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+      setAssistantStatuses({
+        thinker: { status: "idle", progress: 0 },
+        writer: { status: "idle", progress: 0 },
+        coder: { status: "idle", progress: 0 },
+        researcher: { status: "idle", progress: 0 },
+        designer: { status: "idle", progress: 0 },
+      });
+    }
   };
 
-  const handleLogout = () => {
-    console.log("Logout clicked");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Sign out failed",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -220,7 +256,7 @@ export default function Chat() {
           <div className="container mx-auto max-w-3xl">
             <ChatInput
               onSend={handleSendMessage}
-              disabled={isTyping}
+              disabled={isTyping || isPending}
               placeholder="Ask NEXAR anything..."
             />
           </div>

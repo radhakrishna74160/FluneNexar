@@ -5,9 +5,11 @@ import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -17,10 +19,17 @@ export default function Login() {
       // You can handle the signed-in user here
       const user = result.user;
       console.log("Google sign-in successful", user);
-      // TODO: redirect or update app state on successful login
+      toast({
+        title: "Welcome!",
+        description: `Signed in as ${user.displayName}`,
+      });
     } catch (err) {
       console.error("Google sign-in error", err);
-      // Optionally display an error toast to the user
+      toast({
+        title: "Sign-in failed",
+        description: "Please try again or check your connection.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
